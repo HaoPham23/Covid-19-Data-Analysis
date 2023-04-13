@@ -102,7 +102,7 @@ Chuyển qua logarithm hoặc các dạng khác nếu cần.
 ### Thống kê đơn biến
 Thực hiện các phương pháp thống kê đơn biến lên từng biến dự đoán, 1 vài phương pháp: Summary Statistics, Frequency Distribution Table, Bar chart, Histogram... 
 
-## Thống kê đa biến
+### Thống kê đa biến
 Tính ma trận hiệp phương sai (matrix 7x7)
 
 Dựng đồ thị mô tả sự tương quan giữa các biến
@@ -115,13 +115,13 @@ Tính ra các hệ số của mô hình
 
 ## Ước lượng độ lệch chuẩn của sai số
 
-## Xác định hệ số R^2 hiệu chỉnh
+## Xác định hệ số $R^2$ hiệu chỉnh
 
 ## Xác định khoảng tin cậy của các hệ số hồi quy
 
 ## Kiểm định đường hồi quy và các hệ số hồi quy
 
-## Xác định khoảng tin cậy của giá trị trung bình của Y khi x=x_0
+## Xác định khoảng tin cậy của giá trị trung bình của $Y$ khi $x=x_0$
 
 ## Xác định khoảng tin cậy của các giá trị dự đoán
 
