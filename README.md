@@ -3,10 +3,10 @@
 Chép trong đề
 
 ## Dữ liệu sử dụng [Hào, XONG]
-Bộ dữ liệu về Covid-19 thu thập ở Việt Nam.
+Bộ dữ liệu về Covid-19 thu thập ở USA.
 
 Tập dữ liệu gồm có 14 thuộc tính:
-1. **location**: Tên đất nước (Việt Nam)
+1. **location**: Tên đất nước (USA)
 2. **date**: Ngày thu thập dữ liệu
 3. **new_deaths**: số ca tử vong mới trong ngày
 4. **total_deaths**: tổng số ca tử vong

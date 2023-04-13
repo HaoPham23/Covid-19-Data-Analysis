@@ -20,12 +20,12 @@ Thư viện
 library(readr) #Read file
 library(dplyr)  #Provide manipulate functions
 library(tidyr) #Tidy dataframe
-library(rmarkdown)
+# library(rmarkdown)
 ```
 
 ```{r}
-covidData <- read_csv("owid-covid-data.csv", show_col_types=FALSE)
-covidData <- covidData %>% select(location, date, new_deaths, total_deaths, new_cases, total_cases, new_tests, total_tests, positive_rate, people_fully_vaccinated, icu_patients, hosp_patients, reproduction_rate, population, ) %>% filter(location == 'Vietnam')
+covidData <- read_csv("./data/owid-covid-data.csv", show_col_types=FALSE)
+covidData <- covidData %>% select(location, date, new_deaths, total_deaths, new_cases, total_cases, new_tests, total_tests, positive_rate, people_fully_vaccinated, icu_patients, hosp_patients, reproduction_rate, population, ) %>% filter(location == 'United States')
 print(covidData)
-write.csv(covidData, 'vietnam.csv')
+write.csv(covidData, 'usa.csv')
 ```
