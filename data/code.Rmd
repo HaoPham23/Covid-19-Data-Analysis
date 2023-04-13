@@ -1,12 +1,21 @@
 ## Đọc dữ liệu
-
+library(dplyr)
+library(tidyr)
+old_data <- read.csv("usa.csv")
 ## Làm sạch dữ liệu (Data cleaning)
-### Trích xuất các dữ liệu chính
-(Chỉ giữ lại các cột cần thiết, bao gồm 6 cột của biến dự đoán và cột biến ước lượng)
-### Xử lý dữ liệu khuyết (NA)
-(Kiểm tra các dữ liệu NA, thay bằng 0 hoặc giá trị khác)
+new_data <- old_data %>% select(3:14)
 
-## Làm rõ dữ liệu 
+### Trích xuất các dữ liệu chính
+#(Chỉ giữ lại các cột cần thiết, bao gồm 6 cột của biến dự đoán và cột biến ước lượng)
+main_data <- subset(new_data , select = c(new_deaths , new_cases , new_tests , icu_patients , hosp_patients , people_fully_vaccinated , positive_rate))
+
+### Xử lý dữ liệu khuyết (NA)
+#(Kiểm tra các dữ liệu NA, thay bằng 0 hoặc giá trị khác)
+main_data %>% sapply(function(col) sum(is.na(col)))    #Số dữ liệu bị khuyết theo cột
+apply(main_data, 2, function(x)sum(is.na(x))/length(x))    #Tỉ lệ dữ liệu bị khuyết
+main_data[is.na(main_data)] <- 0    #NA <- 0
+
+## Làm rõ dữ liệu
 ## Chuyển đổi biến (Data transformation)
 Chuyển qua logarithm hoặc các dạng khác nếu cần.
 ## Thống kê mô tả
