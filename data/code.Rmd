@@ -1,30 +1,79 @@
 ## Đọc dữ liệu
+```{r}
 library(dplyr)
 library(tidyr)
+library(rmarkdown)
 old_data <- read.csv("usa.csv")
+paged_table(old_data) # thay thế cho print, in ra bảng đẹp hơn
+```
 ## Làm sạch dữ liệu (Data cleaning)
+Ta bỏ cột index và cột location vì location luôn cố định (USA).
+```{r}
 new_data <- old_data %>% select(3:14)
-
+paged_table(new_data)
+```
 ### Trích xuất các dữ liệu chính
-#(Chỉ giữ lại các cột cần thiết, bao gồm 6 cột của biến dự đoán và cột biến ước lượng)
+(Chỉ giữ lại các cột cần thiết, bao gồm 6 cột của biến dự đoán và cột biến ước lượng)
+```{r}
 main_data <- subset(new_data , select = c(new_deaths , new_cases , new_tests , icu_patients , hosp_patients , people_fully_vaccinated , positive_rate))
-
+# paged_table(main_data)
+```
 ### Xử lý dữ liệu khuyết (NA)
-#(Kiểm tra các dữ liệu NA, thay bằng 0 hoặc giá trị khác)
+
+Ta tiến hành kiểm tra xem số lượng/tỉ lệ dữ liệu khuyết của mỗi thuộc tính là bao nhiêu. Nguyên nhân xuất hiện dữ liệu khuyết có thể xuất phát từ nhiều yếu tố, điển hình nhất là thiếu sót trong việc thu thập dữ liệu ngoài thực tế và nguồn tiếp cận dữ liệu bị hạn chế.
+
+```{r}
 main_data %>% sapply(function(col) sum(is.na(col)))    #Số dữ liệu bị khuyết theo cột
 apply(main_data, 2, function(x)sum(is.na(x))/length(x))    #Tỉ lệ dữ liệu bị khuyết
-main_data[is.na(main_data)] <- 0    #NA <- 0
+```
+Tỉ lệ dự liệu khuyết tương đối cao, nếu chỉ đơn giản thay các giá trị NA bằng 0 thì kết quả thống kê sẽ bị ảnh hưởng rất nhiều. Để an toàn, ta sẽ loại bỏ hẳn các hàng ít nhất một dữ liệu khuyết.
+
+```{r}
+main_data <- na.omit(main_data)
+# main_data[is.na(main_data)] <- 0    #NA <- 0
+paged_table(main_data)
+```
 
 ## Làm rõ dữ liệu
+
 ## Chuyển đổi biến (Data transformation)
-Chuyển qua logarithm hoặc các dạng khác nếu cần.
+
+(Chuyển qua logarithm hoặc các dạng khác nếu cần.)
+
 ## Thống kê mô tả
+
 ### Thống kê đơn biến
 Thực hiện các phương pháp thống kê đơn biến lên từng biến dự đoán, 1 vài phương pháp: Summary Statistics, Frequency Distribution Table, Bar chart, Histogram... 
 
-### Thống kê đa biến
-Tính ma trận hiệp phương sai (matrix 7x7)
+#### Summary Statistics
+Ta tính các gía trị thống kê mô tả cho mỗi biến, bao gồm: trung bình (mean), trung vị (median), độ lệch chuẩn (sd), min, max
 
+```{r}
+stat_table<-apply(main_data[,c("new_deaths", "new_cases", "new_tests", "icu_patients", "hosp_patients", "people_fully_vaccinated", "positive_rate")], 2,
+function(x){c(mean(x), median(x), sd(x), min(x), max(x))})
+rownames(stat_table)<-c("mean", "median", "sd", "min", "max")
+paged_table(as.data.frame(stat_table))
+```
+
+```{r}
+hist(main_data$new_deaths, main="Do thi phan phoi cua new_deaths", col = "blue", border = "white",
+xlab = "cases", breaks = 20)
+```
+
+### Thống kê đa biến
+
+Ta tính ma trận hiệp phương sai của cả 7 biến này để kiểm tra sự phụ thuộc tuyến tính của từng cặp biến với nhau.
+
+```{r}
+paged_table(as.data.frame(cor(main_data)))
+```
+
+Dựng đồ thị mô tả sự tương quan giữa các biến (ở đây chọn 4 biến new_deaths, icu_patients, hosp_patients vì correlation giữa chúng tương đối cao). (THỬ NGHIỆM)
+
+```{r}
+contTab = subset(main_data, select = c(new_deaths, icu_patients, hosp_patients))
+pairs(contTab)
+```
 Dựng đồ thị mô tả sự tương quan giữa các biến
 
 # Xây dựng mô hình hồi quy bội
