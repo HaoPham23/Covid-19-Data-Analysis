@@ -3,6 +3,7 @@
 library(dplyr)
 library(tidyr)
 library(rmarkdown)
+library(ggplot2)
 old_data <- read.csv("usa.csv")
 paged_table(old_data) # thay thế cho print, in ra bảng đẹp hơn
 ```
@@ -56,8 +57,49 @@ paged_table(as.data.frame(stat_table))
 ```
 
 ```{r}
+
 hist(main_data$new_deaths, main="Do thi phan phoi cua new_deaths", col = "blue", border = "white",
-xlab = "cases", breaks = 20)
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$new_deaths), sd = sd(main_data$new_deaths)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$new_cases, main="Do thi phan phoi cua new_cases", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$new_cases), sd = sd(main_data$new_cases)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$new_tests, main="Do thi phan phoi cua new_tests", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$new_tests), sd = sd(main_data$new_tests)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$icu_patients, main="Do thi phan phoi cua icu_patients", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$icu_patients), sd = sd(main_data$icu_patients)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$hosp_patients, main="Do thi phan phoi cua hosp_patients", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$hosp_patients), sd = sd(main_data$hosp_patients)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$people_fully_vaccinated, main="Do thi phan phoi cua people_fully_vaccinated", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$people_fully_vaccinated), sd = sd(main_data$people_fully_vaccinated)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
+hist(main_data$positive_rate, main="Do thi phan phoi cua positive_rate", col = "blue", border = "white",
+xlab = "cases", breaks = 20 , freq = FALSE)
+curve(dnorm(x, mean = mean(main_data$positive_rate), sd = sd(main_data$positive_rate)),
+      col = "red",       # Color of curve
+      lwd = 2,           # Line width of 2 pixels
+      add = TRUE)        # Superimpose on previous graph
 ```
 
 ### Thống kê đa biến

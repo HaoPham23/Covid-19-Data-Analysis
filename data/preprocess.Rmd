@@ -21,6 +21,7 @@ library(readr) #Read file
 library(dplyr)  #Provide manipulate functions
 library(tidyr) #Tidy dataframe
 library(rmarkdown)
+library(ggplot2)
 ```
 
 ```{r}
