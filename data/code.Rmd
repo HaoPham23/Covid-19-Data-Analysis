@@ -4,6 +4,7 @@ library(dplyr)
 library(tidyr)
 library(rmarkdown)
 library(ggplot2)
+
 old_data <- read.csv("usa.csv")
 paged_table(old_data) # thay thế cho print, in ra bảng đẹp hơn
 ```
@@ -16,7 +17,7 @@ paged_table(new_data)
 ### Trích xuất các dữ liệu chính
 (Chỉ giữ lại các cột cần thiết, bao gồm 6 cột của biến dự đoán và cột biến ước lượng)
 ```{r}
-main_data <- subset(new_data , select = c(new_deaths , new_cases , new_tests , icu_patients , hosp_patients , people_fully_vaccinated , positive_rate))
+main_data <- subset(new_data , select = c(new_deaths , new_cases , new_tests, hosp_patients , positive_rate))
 # paged_table(main_data)
 ```
 ### Xử lý dữ liệu khuyết (NA)
@@ -44,23 +45,27 @@ Thực hiện các phương pháp thống kê đơn biến lên từng biến d�
 Ta tính các gía trị thống kê mô tả cho mỗi biến, bao gồm: trung bình (mean), trung vị (median), độ lệch chuẩn (sd), min, max
 
 ```{r}
-stat_table<-apply(main_data[,c("new_deaths", "new_cases", "new_tests", "icu_patients", "hosp_patients", "people_fully_vaccinated", "positive_rate")], 2,
+stat_table<-apply(main_data[,c("new_deaths", "new_cases", "new_tests", "hosp_patients", "positive_rate")], 2,
 function(x){c(mean(x), median(x), sd(x), min(x), max(x))})
 rownames(stat_table)<-c("mean", "median", "sd", "min", "max")
 paged_table(as.data.frame(stat_table))
 ```
 
+Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuân theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sao khi transform sẽ tuân theo phân phối chuẩn:
+
 ```{r}
 plot_hist_norm <- function(data, var) {
   # Calculate the variable to plot
   plot_var <- data[[var]]
-  
+  par(mfrow = c(1, 2))
   # Histogram of the variable
-  hist(plot_var, main = paste0("Histogram and Normal Curve of '", var, "'"),
-       col = "blue", border = "white", xlab = "Cases", breaks = 20, freq = FALSE)
   # Normal curve overlay
-  curve(dnorm(x, mean = mean(plot_var), sd = sd(plot_var)), 
-        col = "red", lwd = 2, add = TRUE)
+  hist(plot_var, main = paste0(var), xlab = "x",
+     col = "blue", border = "white", breaks = 20, freq = FALSE)
+  hist(log(plot_var), main = paste0("Log(", var, ")"), xlab = "ln(x)",
+     col = "blue", border = "white", breaks = 20, freq = FALSE)
+  curve(dnorm(x, mean = mean(log(plot_var)), sd = sd(log(plot_var))), 
+        col = "red", lwd = 2, add = TRUE) 
 }
 for (col_name in colnames(main_data)) {
   # Call plot_hist_norm on each column
@@ -68,24 +73,18 @@ for (col_name in colnames(main_data)) {
 }
 ```
 
-Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuần theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sao khi transform sẽ tuân theo phân phối chuẩn:
+Rõ ràng biểu đồ sau khi chuyển đổi dữ liệu có hình dạng giống phân phối chuẩn hơn. Vì thế, ta sẽ sử dụng bộ dữ liệu sau khi chuyển đổi:
 
 ```{r}
-plot_hist_norm_log <- function(data, var) {
-  # Calculate the variable to plot
-  plot_var <- log(data[[var]])
-  
-  # Histogram of the variable
-  hist(plot_var, main = paste0("Histogram and Normal Curve of log(", var, ")"),
-       col = "blue", border = "white", xlab = "Cases", breaks = 20, freq = FALSE)
-  # Normal curve overlay
-  curve(dnorm(x, mean = mean(plot_var), sd = sd(plot_var)), 
-        col = "red", lwd = 2, add = TRUE)
-}
+# Apply log data transformation to all variables
 for (col_name in colnames(main_data)) {
-  # Call plot_hist_norm on each column
-  plot_hist_norm_log(main_data, col_name)
+  main_data[[col_name]] <- log(main_data[[col_name]])
 }
+
+stat_table<-apply(main_data[,c("new_deaths", "new_cases", "new_tests", "hosp_patients", "positive_rate")], 2,
+function(x){c(mean(x), median(x), sd(x), min(x), max(x))})
+rownames(stat_table)<-c("mean", "median", "sd", "min", "max")
+paged_table(as.data.frame(stat_table))
 ```
 
 ### Thống kê đa biến
@@ -96,13 +95,12 @@ Ta tính ma trận hiệp phương sai của cả 7 biến này để kiểm tra
 paged_table(as.data.frame(cor(main_data)))
 ```
 
-Dựng đồ thị mô tả sự tương quan giữa các biến (ở đây chọn 4 biến new_deaths, icu_patients, hosp_patients vì correlation giữa chúng tương đối cao). (THỬ NGHIỆM)
+Dựng đồ thị mô tả sự tương quan giữa các cặp biến:
 
 ```{r}
-contTab = subset(main_data, select = c(new_deaths, icu_patients, hosp_patients))
+contTab = subset(main_data, select = colnames(main_data))
 pairs(contTab)
 ```
-Dựng đồ thị mô tả sự tương quan giữa các biến
 
 # Xây dựng mô hình hồi quy bội
 ## Định nghĩa và ký hiệu cho mô hình
@@ -110,8 +108,34 @@ Dựng đồ thị mô tả sự tương quan giữa các biến
 ## Ước lượng tham số
 Tính ra các hệ số của mô hình
 
+```{r}
+model <- lm(new_deaths ~ new_cases + new_tests + hosp_patients + positive_rate, 
+            data = main_data)
+summary(model)
+# In ra cac he so cua mo hinh
+paged_table(as.data.frame(t(model$coefficients)))
+
+SSE <- (model$residuals ^ 2) %>% sum()
+SSR <- ((model$fitted.values - mean(main_data$new_deaths)) ^ 2) %>% sum()
+SST <- ((main_data$new_deaths - mean(main_data$new_deaths)) ^ 2) %>% sum()
+table <- data.frame(SSE, SSR, SST)
+# Print the table
+paged_table(table)
+```
+
 ## Ước lượng độ lệch chuẩn của sai số
 
+Công thức tính phương sai của sai số:
+
+$${\hat{\sigma}}^2 = \dfrac{SSE}{n-(k+1)}$$
+
+Với $n$ là số lượng quan sát và $k$ là số lượng tham số hồi quy.
+
+Tính độ lệch chuẩn của sai số:
+```{r}
+error_sd <- sqrt(SSE / (nrow(main_data) - 5))
+print(error_sd)
+```
 ## Xác định hệ số $R^2$ hiệu chỉnh
 
 ## Xác định khoảng tin cậy của các hệ số hồi quy
