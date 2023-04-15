@@ -27,7 +27,7 @@ Ta tiến hành kiểm tra xem số lượng/tỉ lệ dữ liệu khuyết củ
 main_data %>% sapply(function(col) sum(is.na(col)))    #Số dữ liệu bị khuyết theo cột
 apply(main_data, 2, function(x)sum(is.na(x))/length(x))    #Tỉ lệ dữ liệu bị khuyết
 ```
-Tỉ lệ dự liệu khuyết tương đối cao, nếu chỉ đơn giản thay các giá trị NA bằng 0 thì kết quả thống kê sẽ bị ảnh hưởng rất nhiều. Để an toàn, ta sẽ loại bỏ hẳn các hàng ít nhất một dữ liệu khuyết.
+Tỉ lệ dữ liệu khuyết tương đối cao, nếu chỉ đơn giản thay các giá trị NA bằng 0 thì kết quả thống kê sẽ bị ảnh hưởng rất nhiều. Để an toàn, ta sẽ loại bỏ hẳn các hàng có chứa ít nhất một dữ liệu khuyết.
 
 ```{r}
 main_data <- na.omit(main_data)
@@ -36,12 +36,6 @@ paged_table(main_data)
 ```
 
 ## Làm rõ dữ liệu
-
-## Chuyển đổi biến (Data transformation)
-
-(Chuyển qua logarithm hoặc các dạng khác nếu cần.)
-
-## Thống kê mô tả
 
 ### Thống kê đơn biến
 Thực hiện các phương pháp thống kê đơn biến lên từng biến dự đoán, 1 vài phương pháp: Summary Statistics, Frequency Distribution Table, Bar chart, Histogram... 
@@ -57,49 +51,41 @@ paged_table(as.data.frame(stat_table))
 ```
 
 ```{r}
+plot_hist_norm <- function(data, var) {
+  # Calculate the variable to plot
+  plot_var <- data[[var]]
+  
+  # Histogram of the variable
+  hist(plot_var, main = paste0("Histogram and Normal Curve of '", var, "'"),
+       col = "blue", border = "white", xlab = "Cases", breaks = 20, freq = FALSE)
+  # Normal curve overlay
+  curve(dnorm(x, mean = mean(plot_var), sd = sd(plot_var)), 
+        col = "red", lwd = 2, add = TRUE)
+}
+for (col_name in colnames(main_data)) {
+  # Call plot_hist_norm on each column
+  plot_hist_norm(main_data, col_name)
+}
+```
 
-hist(main_data$new_deaths, main="Do thi phan phoi cua new_deaths", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$new_deaths), sd = sd(main_data$new_deaths)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$new_cases, main="Do thi phan phoi cua new_cases", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$new_cases), sd = sd(main_data$new_cases)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$new_tests, main="Do thi phan phoi cua new_tests", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$new_tests), sd = sd(main_data$new_tests)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$icu_patients, main="Do thi phan phoi cua icu_patients", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$icu_patients), sd = sd(main_data$icu_patients)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$hosp_patients, main="Do thi phan phoi cua hosp_patients", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$hosp_patients), sd = sd(main_data$hosp_patients)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$people_fully_vaccinated, main="Do thi phan phoi cua people_fully_vaccinated", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$people_fully_vaccinated), sd = sd(main_data$people_fully_vaccinated)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
-hist(main_data$positive_rate, main="Do thi phan phoi cua positive_rate", col = "blue", border = "white",
-xlab = "cases", breaks = 20 , freq = FALSE)
-curve(dnorm(x, mean = mean(main_data$positive_rate), sd = sd(main_data$positive_rate)),
-      col = "red",       # Color of curve
-      lwd = 2,           # Line width of 2 pixels
-      add = TRUE)        # Superimpose on previous graph
+Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuần theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sao khi transform sẽ tuân theo phân phối chuẩn:
+
+```{r}
+plot_hist_norm_log <- function(data, var) {
+  # Calculate the variable to plot
+  plot_var <- log(data[[var]])
+  
+  # Histogram of the variable
+  hist(plot_var, main = paste0("Histogram and Normal Curve of log(", var, ")"),
+       col = "blue", border = "white", xlab = "Cases", breaks = 20, freq = FALSE)
+  # Normal curve overlay
+  curve(dnorm(x, mean = mean(plot_var), sd = sd(plot_var)), 
+        col = "red", lwd = 2, add = TRUE)
+}
+for (col_name in colnames(main_data)) {
+  # Call plot_hist_norm on each column
+  plot_hist_norm_log(main_data, col_name)
+}
 ```
 
 ### Thống kê đa biến
