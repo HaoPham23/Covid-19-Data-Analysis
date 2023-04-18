@@ -150,6 +150,15 @@ R2 <- SSR / SST
 print(paste0("R^2 = ", R2))
 ```
 
+Hệ số $R^2$ hiệu chỉnh được tính bằng công thức sau:
+
+$$R^2_{adjusted} = 1 - \dfrac{n-1}{n-(k+1)}(1-R^2)$$
+
+```{r}
+R2_adjusted <- 1 - (nrow(main_data) - 1)/(nrow(main_data) - 5)*(1-R2) 
+print(paste0("Adjusted R^2 = ", R2_adjusted))
+```
+
 ## Xác định khoảng tin cậy của các hệ số hồi quy
 
 ## Kiểm định giả thuyết cho các hệ số hồi quy
