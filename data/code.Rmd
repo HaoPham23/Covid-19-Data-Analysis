@@ -136,7 +136,19 @@ Tính độ lệch chuẩn của sai số:
 error_sd <- sqrt(SSE / (nrow(main_data) - 5))
 print(error_sd)
 ```
-## Xác định hệ số $R^2$ hiệu chỉnh
+## Xác định hệ số $R^2$ (Hệ số xác định)
+
+Hệ số xác định (Coefficient of Determination) là tỷ lệ của tổng sự
+biến thiên trong biến phụ thuộc gây ra bởi sự biến thiên của các biến
+độc lập (biến giải thích) so với tổng sự biến thiên toàn phần. Hệ số
+xác định thường được gọi là $R$. Công thức tính:
+
+$$R^2 = \dfrac{SSR}{SST}$$
+
+```{r}
+R2 <- SSR / SST
+print(paste0("R^2 = ", R2))
+```
 
 ## Xác định khoảng tin cậy của các hệ số hồi quy
 
