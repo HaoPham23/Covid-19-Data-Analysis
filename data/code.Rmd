@@ -51,7 +51,7 @@ rownames(stat_table)<-c("mean", "median", "sd", "min", "max")
 paged_table(as.data.frame(stat_table))
 ```
 
-Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuân theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sao khi transform sẽ tuân theo phân phối chuẩn:
+Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuân theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sau khi transform sẽ tuân theo phân phối chuẩn:
 
 ```{r}
 plot_hist_norm <- function(data, var) {
