@@ -152,6 +152,8 @@ print(paste0("R^2 = ", R2))
 
 ## Xác định khoảng tin cậy của các hệ số hồi quy
 
+## Kiểm định giả thuyết cho các hệ số hồi quy
+
 ## Kiểm định đường hồi quy và các hệ số hồi quy
 
 ## Xác định khoảng tin cậy của giá trị trung bình của $Y$ khi $x=x_0$
