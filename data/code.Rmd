@@ -127,11 +127,13 @@ Từ $n$ mẫu ngẫu nhiên $(X_{1,1}, X_{2,1},...,X_{k,1}, Y_{1}), (X_{1,2}, X
 
 $$Y_i = \beta_0 + \beta_1x_{1,i} + \beta_2x_{2,i} + ... + \beta_kx_{k,i} + \varepsilon_i$$
 
-Với $i = 1..n$. Mô hình cụ thể trong hoạt động này là:
+Với $i = 1..n$. 
+
+Mô hình cụ thể trong hoạt động này là:
 
 $$Y_i = \beta_0 + \beta_1x_{1,i} + \beta_2x_{2,i} + \beta_3x_{3,i} + \beta_4x_{4,i} + \varepsilon_i$$
 
-VỚi $i= 1..703$.
+Vớii $i= 1..703$.
 
 ## Ước lượng tham số
 
@@ -219,9 +221,27 @@ $$F =\dfrac{n-k-1}{k}\dfrac{R^2}{1-R^2}$$
 f <-((nrow(main_data) - 5)/4)*(R2 / (1 - R2)) 
 print(paste0("F = ", f))
 ```
-## Kiểm định đường hồi quy và các hệ số hồi quy
 
-## Xác định khoảng tin cậy của các giá trị dự đoán
+### Kiểm định giả thuyết cho $\beta_0$
+
+### Kiểm định giả thuyết cho $\beta_1$
+
+### Kiểm định giả thuyết cho $\beta_2$
+
+### Kiểm định giả thuyết cho $\beta_3$
+
+### Kiểm định giả thuyết cho $\beta_4$
+
+## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
+
+Sai số chuẩn của mô hình (standard error of the fit) theo từng hệ số:
+
+```{r}
+se <- sqrt(diag(vcov(model)))
+print(se)
+```
+
+## Dự đoán
 
 Dự đoán giá trị:
 ```{r}
@@ -239,11 +259,3 @@ print(prediction_result)
 
 Trong ví dụ trên, với new_cases = 500000, new_tests = 2000000, hosp_patients = 100000 và positive_rate = 0.2, giá trị dự đoán của new_deaths sẽ là 2264, với 2100 và 2441 lần lượt là giới hạn tin cậy dưới và trên, mức tin cậy mặc định 95%.
 
-## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
-
-Sai số chuẩn của mô hình (standard error of the fit) theo từng hệ số:
-
-```{r}
-se <- sqrt(diag(vcov(model)))
-print(se)
-```
