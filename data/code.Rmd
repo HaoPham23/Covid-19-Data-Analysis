@@ -165,7 +165,11 @@ Khoảng tin cậy 95% các hệ số hồi qui:
 confint(model , level = 0.95)
 ```
 ## Kiểm định giả thuyết cho các hệ số hồi quy
-
+$$F =\dfrac{n-k-1}{k}\dfrac{R^2}{1-R^2}$$
+```{r}
+f <-((nrow(main_data) - 5)/4)*(R2 / (1 - R2)) 
+print(paste0("F = ", f))
+```
 ## Kiểm định đường hồi quy và các hệ số hồi quy
 
 ## Xác định khoảng tin cậy của giá trị trung bình của $Y$ khi $x=x_0$
@@ -173,9 +177,10 @@ confint(model , level = 0.95)
 ## Xác định khoảng tin cậy của các giá trị dự đoán
 Dự đoán giá trị:
 ```{r}
-new <- data.frame(new_cases=c(704:707), new_tests=c(704:707), hosp_patients=c(704:707), positive_rate = c(704:707))
-predict(model, new , interval = 'confidence')
+prediction <- data.frame(new_cases=c(500000), new_tests=c(2000000), hosp_patients=c(100000), positive_rate = c(0.2))
+predict(model, prediction , interval = 'confidence')
 ```
+Trong ví dụ trên, với new_cases = 500000, new_tests = 2000000, hosp_patients = 100000 và positive_rate = 0.2, giá trị dự đoán của new_deaths sẽ là 86334.24, với -83858.88 và 256527.4 lần lượt là giới hạn tin cậy dưới và trên, mức tin cậy mặc định 95%.
 ## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
 Sai số chuẩn của mô hình (standard error of the fit) theo từng hệ số:
 ```{r}
