@@ -1,0 +1,1 @@
+$$\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1x_{1,i} + \hat{\beta}_2x_{2,i} + ... + \hat{\beta}_kx_{k,i} + \varepsilon_i$$
