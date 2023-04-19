@@ -160,7 +160,10 @@ print(paste0("Adjusted R^2 = ", R2_adjusted))
 ```
 
 ## Xác định khoảng tin cậy của các hệ số hồi quy
-
+Khoảng tin cậy 95% các hệ số hồi qui:
+```{r}
+confint(model , level = 0.95)
+```
 ## Kiểm định giả thuyết cho các hệ số hồi quy
 
 ## Kiểm định đường hồi quy và các hệ số hồi quy
@@ -168,5 +171,14 @@ print(paste0("Adjusted R^2 = ", R2_adjusted))
 ## Xác định khoảng tin cậy của giá trị trung bình của $Y$ khi $x=x_0$
 
 ## Xác định khoảng tin cậy của các giá trị dự đoán
-
+Dự đoán giá trị:
+```{r}
+new <- data.frame(new_cases=c(704:707), new_tests=c(704:707), hosp_patients=c(704:707), positive_rate = c(704:707))
+predict(model, new , interval = 'confidence')
+```
 ## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
+Sai số chuẩn của mô hình (standard error of the fit) theo từng hệ số:
+```{r}
+se <- sqrt(diag(vcov(model)))
+print(se)
+```
