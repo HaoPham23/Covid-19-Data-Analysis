@@ -135,19 +135,31 @@ $$Y_i = \beta_0 + \beta_1x_{1,i} + \beta_2x_{2,i} + \beta_3x_{3,i} + \beta_4x_{4
 
 Vớii $i= 1..703$.
 
+<!-- ## Các giả định của mô hình hồi quy
+
+4 điều kiện "LINE":
+
+1. (Linear) Tính tuyến tính: mối quan hệ giữa biến dự báo $x$ và biến phụ thuộc $Y$ được giả sử là tuyến tính.
+
+2. (Independent) Tính độc lập: Các sai số $\varepsilon_i$ là các biến độc lập.
+
+3. (Normally distributed) Tính phân phối chuẩn: Các sai số $\varepsilon_i$ có phân phối chuẩn.
+
+4. (Equal variances) Tính đồng nhất: Các sai số $\varepsilon_i$ có cùng phương sai. -->
+
 ## Ước lượng tham số
 
 Hàm hồi quy mẫu được xây dựng từ $n$ quan sát có dạng:
 
 $$\hat{y}_i = \hat{\beta}_0 + \hat{\beta}_1x_{1,i} + \hat{\beta}_2x_{2,i} + ... + \hat{\beta}_kx_{k,i}$$
 
-$$y_i = \hat{\beta}_0 + \hat{\beta}_1x_{1,i} + \hat{\beta}_2x_{2,i} + ... + \hat{\beta}_kx_{k,i} + \hat{\varepsilon}_i = \hat{y}_i + \hat{\varepsilon}_i$$
+$$y_i = \hat{\beta}_0 + \hat{\beta}_1x_{1,i} + \hat{\beta}_2x_{2,i} + ... + \hat{\beta}_kx_{k,i} + \hat{\varepsilon}_i = \hat{y}_i + \varepsilon_i$$
 
-Với $i = 1..n$. Trong đó $\hat{\beta}_i$ là ước lượng của $\beta_i$, $\hat{\varepsilon}_i$ là ước lượng của $\varepsilon_i$ (phần dư của quan sát thứ $i$).
+Với $i = 1..n$. Trong đó $\hat{\beta}_i$ là ước lượng của $\beta_i$. $\varepsilon_i$ là thặng dư (residuals) của quan sát thứ $i$.
 
 Ta có:
 
-$$SSE = \sum_{i=1}^n \hat{\varepsilon}_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i)^2$$
+$$SSE = \sum_{i=1}^n \varepsilon_i^2 = \sum_{i=1}^n (y_i - \hat{y}_i)^2$$
 
 Ta sẽ tính các hệ số của mô hình sao cho $SSE$ đạt giá trị nhỏ nhất (Phương pháp bình phương cực tiểu).
 
@@ -172,7 +184,31 @@ table <- data.frame(SSE, SSR, SST)
 paged_table(table)
 ```
 
+```{r}
+plot(model)
+```
 
+<!-- *Giải thích*:
+
+1. Đồ thị thứ 1 (Residuals vs Fitted): Vẽ các giá dự báo với các giá trị sai số tương ứng $(\hat{y}_i, \varepsilon_i)$, dùng để kiểm tra tính tuyến tính của dữ liệu (giả định 1) và tính đồng nhất của các phương sai sai số. Nếu giả định về tính tuyến tính của dữ liệu không thoả, ta sẽ quan sát thấy các điểm thặng dư (residuals) phân bố theo một pattern nào đó (ví dụ parabol). Nếu đường màu đỏ trên đồ thị là đường thẳng nằm ngang, thì giả định về tính tuyến tính của dữ liệu được thoả mãn. Nếu các điểm thặng dư phân tán xung quanh đường thẳng $y=0$, thì giả định về tính đồng nhất của phương sai sai số được thoả mãn.
+
+2. Đồ thị thứ 2 (Normal Q-Q): Cho phép kiểm tra giả định về phân phối chuẩn (giả định 3) của sai số $\varepsilon$. Nếu các giá trị sai số nằm trên một đường thẳng thì điều kiện về phân phối chuẩn được thoả mãn.
+
+3. Đồ thị thứ 3 (Scale - Location): Vẽ căn bậc hai của các giá trị thặng dư vói các giá trị dự báo, được dùng để kiểm tra giả định phương sai của các sai số là đồng nhất (hằng số). Nếu đường màu đỏ trên đồ thị là đường thẳng nằm ngang và các điểm giá trị phân tán xung quanh đường thẳng này thì giả định trên được thoả.
+
+4. Đồ thị thứ 4 (Residuals vs Leverage): Cho phép xác định những điểm có ảnh hưởng cao (nếu có). Những điểm này có thể là outliers, là những điểm gây nhiều ảnh hưởng nhất khi phân tích dữ liệu.  -->
+
+*Nhận xét*:
+
+1. Đồ thị 1 (Residuals vs Fitted) vẽ các giá trị sai số tương ứng với các giá trị dự báo, kiểm tra giả định tuyến tính dữ liệu và giả định các sai số có kỳ vọng bằng 0:
+  - Ta nhận thấy đường màu đỏ gần như là đường thẳng nên giả định tuyến tính của dữ liệu tạm thỏa mãn.
+  - Các sai số tập trung xung quanh đường thẳng $y = 0$ nên giả định các sai số có kỳ vọng bằng 0 thỏa mãn.
+
+2. Đồ thị 2 (Normal Q-Q) vẽ các sai số đã được chuẩn hóa kiểm tra giả định phân phối chuẩn. Ta nhận thấy các sai số đã được chuẩn hóa trên một đường thẳng nên giả định được thỏa mãn.
+
+3. Đồ thị 3 (Scale - Location) vẽ căn bậc hai của sai số, kiểm tra giả định phương sai của sai số là hằng số. Ta nhận thấy các căn bậc hai sai số tập trung quanh đường thẳng màu đỏ. Vì thế giả định phương sai của sai số là hằng số được thoả mãn.
+
+4. Đồ thị 4 (Residuals vs Leverage) xác định các điểm có ảnh hưởng cao nếu nó hiện diện trong bộ dữ liệu. Các điểm 555, 748, 833 có thể là các điểm có ảnh hưởng cao. Tuy nhiên các điểm này chưa vượt qua đường Cook’s distance nên chưa thật sự là điểm ảnh hưởng cao do đó không cần loại bỏ khi phân tích.
 
 ## Ước lượng độ lệch chuẩn của sai số
 
@@ -222,15 +258,7 @@ f <-((nrow(main_data) - 5)/4)*(R2 / (1 - R2))
 print(paste0("F = ", f))
 ```
 
-### Kiểm định giả thuyết cho $\beta_0$
-
-### Kiểm định giả thuyết cho $\beta_1$
-
-### Kiểm định giả thuyết cho $\beta_2$
-
-### Kiểm định giả thuyết cho $\beta_3$
-
-### Kiểm định giả thuyết cho $\beta_4$
+Ta summary model để xác định t_value, 
 
 ## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
 
