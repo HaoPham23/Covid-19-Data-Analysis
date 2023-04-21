@@ -41,7 +41,7 @@ paged_table(main_data)
 ## Làm rõ dữ liệu
 
 ### Thống kê đơn biến
-Thực hiện các phương pháp thống kê đơn biến lên từng biến dự đoán, 1 vài phương pháp: Summary Statistics, Frequency Distribution Table, Bar chart, Histogram... 
+Thực hiện các phương pháp thống kê đơn biến lên từng biến giải thích, và cả biến được giải thích.
 
 #### Summary Statistics
 Ta tính các gía trị thống kê mô tả cho mỗi biến, bao gồm: trung bình (mean), trung vị (median), độ lệch chuẩn (sd), min, max
@@ -135,17 +135,6 @@ $$Y_i = \beta_0 + \beta_1x_{1,i} + \beta_2x_{2,i} + \beta_3x_{3,i} + \beta_4x_{4
 
 Vớii $i= 1..703$.
 
-<!-- ## Các giả định của mô hình hồi quy
-
-4 điều kiện "LINE":
-
-1. (Linear) Tính tuyến tính: mối quan hệ giữa biến dự báo $x$ và biến phụ thuộc $Y$ được giả sử là tuyến tính.
-
-2. (Independent) Tính độc lập: Các sai số $\varepsilon_i$ là các biến độc lập.
-
-3. (Normally distributed) Tính phân phối chuẩn: Các sai số $\varepsilon_i$ có phân phối chuẩn.
-
-4. (Equal variances) Tính đồng nhất: Các sai số $\varepsilon_i$ có cùng phương sai. -->
 
 ## Ước lượng tham số
 
@@ -168,7 +157,8 @@ Ta sẽ tính các hệ số của mô hình sao cho $SSE$ đạt giá trị nh�
 ```{r}
 model <- lm(new_deaths ~ new_cases + new_tests + hosp_patients + positive_rate, 
             data = main_data)
-summary(model)
+modSum <- summary(model)
+modSum
 # In ra cac he so cua mo hinh
 paged_table(as.data.frame(t(model$coefficients)))
 ```
@@ -187,16 +177,6 @@ paged_table(table)
 ```{r}
 plot(model)
 ```
-
-<!-- *Giải thích*:
-
-1. Đồ thị thứ 1 (Residuals vs Fitted): Vẽ các giá dự báo với các giá trị sai số tương ứng $(\hat{y}_i, \varepsilon_i)$, dùng để kiểm tra tính tuyến tính của dữ liệu (giả định 1) và tính đồng nhất của các phương sai sai số. Nếu giả định về tính tuyến tính của dữ liệu không thoả, ta sẽ quan sát thấy các điểm thặng dư (residuals) phân bố theo một pattern nào đó (ví dụ parabol). Nếu đường màu đỏ trên đồ thị là đường thẳng nằm ngang, thì giả định về tính tuyến tính của dữ liệu được thoả mãn. Nếu các điểm thặng dư phân tán xung quanh đường thẳng $y=0$, thì giả định về tính đồng nhất của phương sai sai số được thoả mãn.
-
-2. Đồ thị thứ 2 (Normal Q-Q): Cho phép kiểm tra giả định về phân phối chuẩn (giả định 3) của sai số $\varepsilon$. Nếu các giá trị sai số nằm trên một đường thẳng thì điều kiện về phân phối chuẩn được thoả mãn.
-
-3. Đồ thị thứ 3 (Scale - Location): Vẽ căn bậc hai của các giá trị thặng dư vói các giá trị dự báo, được dùng để kiểm tra giả định phương sai của các sai số là đồng nhất (hằng số). Nếu đường màu đỏ trên đồ thị là đường thẳng nằm ngang và các điểm giá trị phân tán xung quanh đường thẳng này thì giả định trên được thoả.
-
-4. Đồ thị thứ 4 (Residuals vs Leverage): Cho phép xác định những điểm có ảnh hưởng cao (nếu có). Những điểm này có thể là outliers, là những điểm gây nhiều ảnh hưởng nhất khi phân tích dữ liệu.  -->
 
 *Nhận xét*:
 
@@ -223,12 +203,15 @@ Tính độ lệch chuẩn của sai số:
 error_sd <- sqrt(SSE / (nrow(main_data) - 5))
 print(error_sd)
 ```
+
+*Note*: Có trong summary(model).
+
 ## Xác định hệ số $R^2$ (Hệ số xác định)
 
 Hệ số xác định (Coefficient of Determination) là tỷ lệ của tổng sự
 biến thiên trong biến phụ thuộc gây ra bởi sự biến thiên của các biến
-độc lập (biến giải thích) so với tổng sự biến thiên toàn phần. Hệ số
-xác định thường được gọi là $R$. Công thức tính:
+độc lập (biến giải thích) (SSR) so với tổng sự biến thiên toàn phần (SST), cho phép ta đánh giá mô
+hình tìm được có giải thích tốt cho mối liên hệ giữa biến giải thích và biến được giải thích hay không. Hệ số xác định thường được ký hiệu là $R^2$. Công thức tính:
 
 $$R^2 = \dfrac{SSR}{SST}$$
 
@@ -246,34 +229,125 @@ R2_adjusted <- 1 - (nrow(main_data) - 1)/(nrow(main_data) - 5)*(1-R2)
 print(paste0("Adjusted R^2 = ", R2_adjusted))
 ```
 
-## Xác định khoảng tin cậy của các hệ số hồi quy
-Khoảng tin cậy 95% các hệ số hồi qui:
-```{r}
-confint(model , level = 0.95)
+*Note*: giá trị này có thể tìm thấy trong bảng summary(model) ở trên:
+
 ```
-## Kiểm định giả thuyết cho các hệ số hồi quy
-```{r}
-modSum <- summary(model)
-modSum$coefficients
+Multiple R-squared:  0.8035, Adjusted R-squared:  0.8024
 ```
-Ta có thể thấy hệ số new_cases có $t-value = 25.997595 \neq 0$ , $p-value = 9.89^{-105}$ rất bé nên new_cases là hệ số có độ significance cao (phủ định giả thuyết $H_0$), tương tự với các hệ số còn lại ta thấy chúng đều phù hợp với mô hình hồi qui đa biến mà ta đang xây dựng.
 
 ## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
 
+Ta sử dụng kiểm định F-test: Là kiểm định mức độ có ý nghĩa (significance) của mô hình đối với biến được giải thích. Nếu vượt qua được F-test với mức ý nghĩa $\alpha$ đủ nhỏ, ta có thể khẳng định mô hình của ta có ý nghĩa trong việc giải thích số ca tử vong mới.
+
+Giả thuyết kiểm định $H_0: \beta_0 = \beta_1 = \beta_2 = \beta_3 = \beta_4 = 0$
+
+Giả thuyết đối $H_1: \exists i \in \{1,2,3,4\}: \beta_i \neq 0$ (Tồn tại một hệ số khác 0)
+
+Giá trị $F$ (F-statistic) được tính như sau:
+
 $$F =\dfrac{n-k-1}{k}\dfrac{R^2}{1-R^2}$$
+
 ```{r}
 f <-((nrow(main_data) - 5)/4)*(R2 / (1 - R2)) 
 print(paste0("F = ", f))
 ```
+
 Tính $p-value$:
 ```{r}
 modSum$fstatistic
 pf(modSum$fstatistic[1],modSum$fstatistic[2],modSum$fstatistic[3],lower.tail=FALSE)
 ```
-Từ $p-value = 6.915648^{-245}$ , ta nói có vài ${\beta}_i \neq 0$ (trong trường hợp này là toàn bộ) , hay nói cách khác ta đang bác bỏ giả thuyết $H_0 : {\beta}_1 = {\beta}_2 = ... = {\beta}_k = 0$ , tức là mô hình đã xây dựng có độ hiệu quả cao.
+Với $p-value = 7.018596\times 10^{-245}$, ta có thể bác bỏ $H_0$ với mức ý nghĩa $\alpha$ cực nhỏ.
+
+*Kết luận*: Mô hình hiện tại có khả năng giả thích được số ca tử vong mới.
+
+*Note*: Cả F-statistic và p-value đều có trong summary(model): 
+
+```
+F-statistic: 713.5 on 4 and 698 DF,  p-value: < 2.2e-16
+```
+
+## Kiểm định giả thuyết cho các hệ số hồi quy
+
+Các thông số thống kê:
+
+1. $\text{t-value}$: Đo lường mức độ lệch của hệ số được ước tính so với giá trị 0. $\text{T-value}$ của $\hat{\beta_i}$ được tính bằng công thức:
+
+$$\text{t-value}(\hat{\beta_i}) = \dfrac{\hat{\beta_i}}{S\hat{\beta_i}}$$
+
+Với $S\hat{\beta_i}$ là độ lệch chuẩn của $\hat{\beta_i}$, có trong bảng summary(model).
+
+2. $p-value$: Là giá trị dùng để kết luận liệu có mối quan hệ nào giữa biến giải thích và biến được giải thích hay không với một mức ý nghĩa $\alpha$ cho trước. Nói cách khác, đây là giá trị dùng cho kiểm định giả thuyết $H_0: \beta_i = 0$ ở mức ý nghĩa $\alpha$. Đây là giá trị $Pr(>|t|)$ trong bảng summary(model) bên dưới.
+
+```{r}
+modSum
+```
+
+### Kiểm định giả thuyết cho hệ số chặn (intercept)
+
+Giả thuyết kiểm định $H_0: \beta_0 = 0$ 
+
+Giả thuyết đối $H_1: \beta_0 \neq 0$ 
+
+Dựa vào bảng summary(model) ở trên, đối với hệ số chặn, ta có $p-value < 2\times 10^{-16}$. Vì $p-value$ vô cùng bé nên ta có thể bác bỏ giả thuyết $H_0$ với mức ý nghĩa $\alpha$ vô cùng nhỏ.
+
+*Kết luận*: Có mối quan hệ giữa $\beta_0$ và new_deaths.
+
+### Kiểm định giả thuyết cho hệ số của biến new_cases
+
+Giả thuyết kiểm định $H_0: \beta_1 = 0$ 
+
+Giả thuyết đối $H_1: \beta_1 \neq 0$ 
+
+Dựa vào bảng summary(model) ở trên, đối với hệ số chặn, ta có $p-value < 2\times 10^{-16}$. Vì $p-value$ vô cùng bé nên ta có thể bác bỏ giả thuyết $H_0$ với mức ý nghĩa $\alpha$ vô cùng nhỏ.
+
+*Kết luận*: Có mối quan hệ giữa $\beta_1$ và new_deaths. Hay, có mối quan hệ tuyến tính đáng kể (significance) giữa số ca mắc mới và số ca tử vong.
+
+### Kiểm định giả thuyết cho hệ số của biến new_tests
+
+Giả thuyết kiểm định $H_0: \beta_2 = 0$ 
+
+Giả thuyết đối $H_1: \beta_2 \neq 0$ 
+
+Dựa vào bảng summary(model) ở trên, đối với hệ số chặn, ta có $p-value = 2.19\times 10^{-9}$. Vì $p-value$ vô cùng bé nên ta có thể bác bỏ giả thuyết $H_0$ với mức ý nghĩa $\alpha$ vô cùng nhỏ.
+
+*Kết luận*: Có mối quan hệ giữa $\beta_2$ và new_deaths. Hay, có mối quan hệ tuyến tính giữa new_tests và new_deaths.
+
+### Kiểm định giả thuyết cho hệ số của biến hosp_patients
+
+Giả thuyết kiểm định $H_0: \beta_3 = 0$ 
+
+Giả thuyết đối $H_1: \beta_3 \neq 0$ 
+
+Dựa vào bảng summary(model) ở trên, đối với hệ số chặn, ta có $p-value < 2\times 10^{-16}$. Vì $p-value$ vô cùng bé nên ta có thể bác bỏ giả thuyết $H_0$ với mức ý nghĩa $\alpha$ vô cùng nhỏ.
+
+*Kết luận*: Có mối quan hệ giữa $\beta_3$ và new_deaths. Hay, có mối quan hệ tuyến tính giữa hosp_patients và new_deaths.
+
+### Kiểm định giả thuyết cho hệ số của biến positive_rate
+
+Giả thuyết kiểm định $H_0: \beta_4 = 0$ 
+
+Giả thuyết đối $H_1: \beta_4 \neq 0$ 
+
+Dựa vào bảng summary(model) ở trên, đối với hệ số chặn, ta có $p-value < 2\times 10^{-16}$. Vì $p-value$ vô cùng bé nên ta có thể bác bỏ giả thuyết $H_0$ với mức ý nghĩa $\alpha$ vô cùng nhỏ.
+
+*Kết luận*: Có mối quan hệ giữa $\beta_4$ và new_deaths. Hay, có mối quan hệ tuyến tính giữa positive_rate và new_deaths.
+
+## Xác định khoảng tin cậy của các hệ số hồi quy
+Khoảng tin cậy 95% các hệ số hồi qui:
+```{r}
+confint(model , level = 0.95)
+```
+
 ## Dự đoán
 
-Dự đoán giá trị:
+Sử dụng mô hình trên, ta dự đoán giá trị new_deaths khi:
+
+1. new_cases = 500000
+2. new_tests = 2000000
+3. hosp_patients = 100000
+4. positive_rate = 0.2
+
 ```{r}
 prediction <- data.frame(new_cases=c(log(500000)), new_tests=c(log(2000000)), hosp_patients=c(log(100000)), positive_rate = c(log(0.2)))
 predict(model, prediction , interval = 'confidence')
@@ -287,5 +361,5 @@ prediction_result[, 1:3] <- exp(prediction_result[, 1:3])
 print(prediction_result)
 ```
 
-Trong ví dụ trên, với new_cases = 500000, new_tests = 2000000, hosp_patients = 100000 và positive_rate = 0.2, giá trị dự đoán của new_deaths sẽ là 2264, với 2100 và 2441 lần lượt là giới hạn tin cậy dưới và trên, mức tin cậy mặc định 95%.
+Trong ví dụ trên, với new_cases = 500000, new_tests = 2000000, hosp_patients = 100000 và positive_rate = 0.2, giá trị dự đoán của new_deaths sẽ xấp xỉ 2264, với 2100 và 2441 lần lượt là giới hạn tin cậy dưới và trên, mức tin cậy mặc định 95%.
 
