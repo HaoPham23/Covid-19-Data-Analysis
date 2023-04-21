@@ -252,23 +252,25 @@ Khoảng tin cậy 95% các hệ số hồi qui:
 confint(model , level = 0.95)
 ```
 ## Kiểm định giả thuyết cho các hệ số hồi quy
+```{r}
+modSum <- summary(model)
+modSum$coefficients
+```
+Ta có thể thấy hệ số new_cases có $t-value = 25.997595 \neq 0$ , $p-value = 9.89^{-105}$ rất bé nên new_cases là hệ số có độ significance cao (phủ định giả thuyết $H_0$), tương tự với các hệ số còn lại ta thấy chúng đều phù hợp với mô hình hồi qui đa biến mà ta đang xây dựng.
+
+## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
+
 $$F =\dfrac{n-k-1}{k}\dfrac{R^2}{1-R^2}$$
 ```{r}
 f <-((nrow(main_data) - 5)/4)*(R2 / (1 - R2)) 
 print(paste0("F = ", f))
 ```
-
-Ta summary model để xác định t_value, 
-
-## Kiểm định sự phù hợp của mô hình hồi quy tuyến tính
-
-Sai số chuẩn của mô hình (standard error of the fit) theo từng hệ số:
-
+Tính $p-value$:
 ```{r}
-se <- sqrt(diag(vcov(model)))
-print(se)
+modSum$fstatistic
+pf(modSum$fstatistic[1],modSum$fstatistic[2],modSum$fstatistic[3],lower.tail=FALSE)
 ```
-
+Từ $p-value = 6.915648^{-245}$ , ta nói có vài ${\beta}_i \neq 0$ (trong trường hợp này là toàn bộ) , hay nói cách khác ta đang bác bỏ giả thuyết $H_0 : {\beta}_1 = {\beta}_2 = ... = {\beta}_k = 0$ , tức là mô hình đã xây dựng có độ hiệu quả cao.
 ## Dự đoán
 
 Dự đoán giá trị:
