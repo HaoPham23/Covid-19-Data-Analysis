@@ -4,6 +4,8 @@ library(dplyr)
 library(tidyr)
 library(rmarkdown)
 library(ggplot2)
+library(car)
+library(corrplot)
 
 old_data <- read.csv("usa.csv")
 paged_table(old_data) # thay thế cho print, in ra bảng đẹp hơn
@@ -94,7 +96,7 @@ paged_table(as.data.frame(stat_table))
 Ta tính ma trận hiệp phương sai của cả 5 biến này để kiểm tra sự phụ thuộc tuyến tính của từng cặp biến với nhau.
 
 ```{r}
-paged_table(as.data.frame(cor(main_data)))
+corrplot(cor(main_data), method = "number")
 ```
 
 Dựng đồ thị mô tả sự tương quan giữa các cặp biến:
@@ -363,3 +365,18 @@ print(prediction_result)
 
 Trong ví dụ trên, với new_cases = 500000, new_tests = 2000000, hosp_patients = 100000 và positive_rate = 0.2, giá trị dự đoán của new_deaths sẽ xấp xỉ 2264, với 2100 và 2441 lần lượt là giới hạn tin cậy dưới và trên, mức tin cậy mặc định 95%.
 
+## Kiểm tra hiện tượng đa cộng tuyến (nên để ở đầu)
+
+Hiện tượng đa cộng tuyến (Multicollinearity) là hiện tượng giữa các biến $x$ có quan hệ tuyến tính với nhau. Đại lượng thường dùng để kiểm tra tính đa cộng tuyến của mô hình là đại lượng VIF (Variance Inflation Factor - Hệ số phóng đại phương sai (gg dịch)), được tính bằng công thức:
+
+$$VIF_j = \dfrac{1}{1- R^2_j}$$
+
+Với $R^2_j$ là hệ số xác định (phần trên có đề cập) giữa biến được giải thích là $x_j$ và các biến giải thích còn lại (các biến $x$ còn lại). $R^2_j$ càng gần 1 thì $x_j$ càng có quan hệ tuyến tính với các biến $x$ còn lại.
+
+Trong trường hợp xảy ra hiện tượng đa cộng tuyến, thì $R^2_j$ lớn, dẫn đến $VIF_j$ lớn, bắt buộc ta phải loại $x_j$ ra khỏi mô hình hồi quy. Do vẫn chưa có sự thống nhất về mức giá trị $VIF$ bao nhiêu là lớn, ta sẽ quy ước nếu $VIF_j > 10$ (hay $R^2_j > 0.9$), thì xảy ra hiện tượng đa cộng tuyến của biến $x_j$ đối với mô hình. 
+
+```{r}
+vif(model)
+```
+
+Ta nhận thấy giá trị $VIF$ của các biến $x$ đều nhỏ hơn 10, nên kết luận mô hình không có hiện tượng đa cộng tuyến. 
