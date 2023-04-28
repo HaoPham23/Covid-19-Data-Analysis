@@ -215,6 +215,9 @@ plot(model)
 par(mfrow=c(1,1))
 ```
 
+```{r}
+plot(model)
+```
 *Nhận xét*:
 
 1. Đồ thị 1 (Residuals vs Fitted) vẽ các giá trị sai số tương ứng với các giá trị dự báo, kiểm tra giả định tuyến tính dữ liệu và giả định các sai số có kỳ vọng bằng 0:

@@ -1,1 +1,10 @@
-$$\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1x_{1,i} + \hat{\beta}_2x_{2,i} + ... + \hat{\beta}_kx_{k,i} + \varepsilon_i$$
+\begin{equation*}
+    \begin{cases}
+\displaystyle\frac{ \partial f(\hat{\beta}_0,\hat{\beta}_1,\cdots,\hat{\beta}_n)}{\partial (\hat{\beta}_0)} =
+-2 \sum_{i=1}^n(Y_{i} - \hat{\beta}_0 - \hat{\beta}_1X_{i1} - \hat{\beta}_2 X_{i2} - \hat{\beta}_3 X_{i3}  \cdots -\hat{\beta}_kX_{ik})  = 0 \\
+\displaystyle\frac{ \partial f(\hat{\beta}_0, \hat{\beta}_1,\cdots,\hat{\beta}_n)}{\partial (\hat{\beta}_1)} =
+-2 \sum_{i=1}^nX_{i1}(Y_{i} - \hat{\beta}_0 - \hat{\beta}_1X_{i1} - \hat{\beta}_2 X_{i2} - \hat{\beta}_3 X_{i3}  \cdots -\hat{\beta}_kX_{ik})  = 0 \\
+\vdots\\
+\displaystyle\frac{ \partial f(\hat{\beta}_0,\hat{\beta}_1,\cdots,\hat{\beta}_n)}{\partial (\hat{\beta}_k)} = -2\sum_{i=1}^nX_{ik}(Y_{i} - \hat{\beta}_0 - \hat{\beta}_1X_{i1} - \hat{\beta}_2 X_{i2} - \hat{\beta}_3 X_{i3}  \cdots -\hat{\beta}_kX_{ik}) = 0       
+    \end{cases}
+\end{equation*}
