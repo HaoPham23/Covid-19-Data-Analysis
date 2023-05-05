@@ -62,10 +62,10 @@ paged_table(as.data.frame(stat_table))
 Dựa vào biểu đồ, ta nhận thấy giá trị của chúng bị lệch khá nhiều và không tuân theo phân phối chuẩn. Vì thế, ta thực hiện transform dữ liệu bằng hàm logarithm, với hi vọng là dữ liệu sau khi transform sẽ tuân theo phân phối chuẩn:
 
 ```{r}
+par(mfrow = c(2, 2))
 plot_hist_norm <- function(data, var) {
   # Calculate the variable to plot
   plot_var <- data[[var]]
-  par(mfrow = c(1, 2))
   # Histogram of the variable
   # Normal curve overlay
   hist(plot_var, main = paste0(var), xlab = "x",
@@ -98,15 +98,10 @@ paged_table(as.data.frame(stat_table))
 ### Thống kê đa biến
 
 Ta tính ma trận hiệp phương sai của cả 5 biến này để kiểm tra sự phụ thuộc tuyến tính của từng cặp biến với nhau.
-
+Ta thấy hệ số tương quan của các cặp biến không cao, nên có thể giả định chúng là các biến độc lập.
+Đồng thời, để trực quan hơn, ta dựng đồ thị mô tả sự tương quan giữa các cặp biến:
 ```{r}
 corrplot(cor(main_data %>% select(-c("new_cases"))), method = "number")
-```
-
-Ta thấy hệ số tương quan của các cặp biến không cao, nên có thể giả định chúng là các biến độc lập.
-Để trực quan hơn, ta dựng đồ thị mô tả sự tương quan giữa các cặp biến:
-
-```{r}
 contTab = select(main_data, -c("new_cases"))
 pairs(contTab)
 ```
@@ -140,7 +135,7 @@ Mô hình cụ thể trong hoạt động này là:
 
 $$Y_i = \beta_0 + \beta_1x_{1,i} + \beta_2x_{2,i} + \beta_3x_{3,i} + \beta_4x_{4,i} + \varepsilon_i$$
 
-Vớii $i= 1..703$.
+Với $i= 1..703$.
 
 
 ## Ước lượng tham số
@@ -211,11 +206,6 @@ modSum <- summary(model)
 
 ```{r}
 par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-```
-
-```{r}
 plot(model)
 ```
 *Nhận xét*:
